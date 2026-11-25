@@ -12,6 +12,17 @@ make        # builds build/libgame.a and build/engine
 make clean
 ```
 
+## Graphical version
+
+A window version (same game logic, one boat of each type on a 20x20 map, two players sharing the mouse) is built with [raylib](https://www.raylib.com/):
+
+```bash
+brew install raylib   # macOS; on other systems install raylib and pkg-config
+make run-ui
+```
+
+Place each boat with a click (`R` rotates, `A` places all randomly), then click cells to fire. Between turns a screen asks you to pass the keyboard, so the other player's boats stay hidden.
+
 ## Rules
 
 - Random setup (`R`) or manual setup (`M`). Random setup picks a random map size; manual setup lets you choose between 20 and 40.
