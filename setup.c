@@ -360,7 +360,7 @@ void get_boats(PLAYER* pl, SETUP* s){
 					scanf("%d", &rotation);
 				
 					while(rotation != 0 && rotation != 90 && rotation != 180 && rotation != 270 && rotation != 360){
-						printf("mpossible rotation, insert again\n");
+						printf("Impossible rotation, insert again\n");
 						scanf("%d", &rotation);
 					}
 					rotation = rotation/90;
@@ -384,7 +384,7 @@ void get_boats(PLAYER* pl, SETUP* s){
 					scanf("%d", &rotation);
 				
 					while(rotation != 0 && rotation != 90 && rotation != 180 && rotation != 270 && rotation != 360){
-						printf("mpossible rotation, insert again\n");
+						printf("Impossible rotation, insert again\n");
 						scanf("%d", &rotation);
 					}
 					rotation = rotation/90;
