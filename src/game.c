@@ -33,41 +33,64 @@ static int is_piece(SETUP* s, PLAYER* target, POINT* p){
 	return target->field[get_y(p)][get_x(p)]->state == '1';
 }
 
+// Fires at (x, y) of the target's waters and updates its map and hp.
+// *sunk is set to the type of the boat that was sunk by this shot, or NULL.
+SHOT_RESULT fire(SETUP* s, PLAYER* target, int x, int y, char** sunk){
+
+	CELL* cell = target->field[y][x];
+	POINT* p;
+	int piece;
+
+	*sunk = NULL;
+	if(cell->state == '2' || cell->state == '3') return SHOT_REPEAT;
+
+	p = make_point(x,y);
+	piece = is_piece(s,target,p);
+	free(p);
+
+	if(!piece){
+		cell->state = '3';
+		return SHOT_MISS;
+	}
+	cell->state = '2';
+	set_hp(target,-1);
+	if(--cell->boat_pointer->pieces == 0){
+		*sunk = cell->boat_pointer->type;
+		return SHOT_SUNK;
+	}
+	return SHOT_HIT;
+}
+
 static void shoot(SETUP* s, PLAYER* shooter, PLAYER* target){
 
 	int map_size = get_map_size(s);
 	POINT* p;
-	CELL* cell;
+	SHOT_RESULT result;
+	char* sunk;
 
 	clear_screen();
 	printf("Player %d, your turn. Shots at player %d's waters:\n\n", get_id(shooter), get_id(target));
 	print_field_shots(target,map_size);
 
 	printf("Player %d, where you want to shoot?\n", get_id(shooter));
-	p = new_point(map_size);
-	cell = target->field[get_y(p)][get_x(p)];
-	while(cell->state == '2' || cell->state == '3'){
-		printf("You have already shotted at this position\n");
-		free(p);
+	while(1){
 		p = new_point(map_size);
-		cell = target->field[get_y(p)][get_x(p)];
+		result = fire(s,target,get_x(p),get_y(p),&sunk);
+		free(p);
+		if(result != SHOT_REPEAT) break;
+		printf("You have already shotted at this position\n");
 	}
 
-	if(is_piece(s,target,p)){
-		BOAT* b = cell->boat_pointer;
-		printf("You have hitted a piece\n");
-		cell->state = '2';
-		set_hp(target,-1);
-		if(--b->pieces == 0){
-			printf("You sank a boat of type ");
-			print_boat_type(b->type);
-		}
+	if(result == SHOT_MISS){
+		printf("You haven't hitted a piece\n");
 	}
 	else{
-		printf("You haven't hitted a piece\n");
-		cell->state = '3';
+		printf("You have hitted a piece\n");
+		if(result == SHOT_SUNK){
+			printf("You sank a boat of type ");
+			print_boat_type(sunk);
+		}
 	}
-	free(p);
 	printf("\n");
 	print_field_shots(target,map_size);
 }
