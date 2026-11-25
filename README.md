@@ -7,8 +7,8 @@ Two-player Battleship game for the terminal, written in C (C99). Built as a univ
 Requires `gcc` and `make`.
 
 ```bash
-make        # builds libgame.a and the engine executable
-./engine    # or: make run
+make        # builds build/libgame.a and build/engine
+./build/engine    # or: make run
 make clean
 ```
 
@@ -28,4 +28,6 @@ Both modes play a full game. In quadtree mode the tree decides hits and misses; 
 
 ## Layout
 
-`engine.c` (main), `setup.c` (game setup), `game.c` (game loop), `player.c`, `boat.c`, `cell.c`, `point.c`, `quadtree.c`, `logo.c`.
+- `src/`: `engine.c` (main), `setup.c` (game setup), `game.c` (game loop), `player.c`, `boat.c`, `cell.c`, `point.c`, `quadtree.c`, `logo.c`
+- `include/`: the matching headers
+- `build/`: compiled output (git-ignored)

@@ -1,22 +1,26 @@
-.PHONY: all run static engine clean
+CC     = gcc
+CFLAGS = -Wall -std=c99 -Iinclude
+SRCS   = $(filter-out src/engine.c, $(wildcard src/*.c))
+OBJS   = $(SRCS:src/%.c=build/%.o)
 
-all: static engine
+.PHONY: all run clean
+
+all: build/engine
 
 run: all
-	./engine
+	./build/engine
 
-static: logo.h logo.c point.h point.c cell.h cell.c quadtree.h quadtree.c boat.h boat.c player.h player.c setup.h setup.c game.h game.c
-	gcc -Wall -c -std=c99 logo.c
-	gcc -Wall -c -std=c99 point.c
-	gcc -Wall -c -std=c99 boat.c
-	gcc -Wall -c -std=c99 cell.c
-	gcc -Wall -c -std=c99 quadtree.c
-	gcc -Wall -c -std=c99 player.c
-	gcc -Wall -c -std=c99 setup.c
-	gcc -Wall -c -std=c99 game.c
-	ar -rc libgame.a logo.o point.o boat.o cell.o quadtree.o player.o setup.o game.o
-engine: engine.c libgame.a
-	gcc -Wall -std=c99 engine.c -o engine -L. -lgame
-	
+build/engine: src/engine.c build/libgame.a
+	$(CC) $(CFLAGS) src/engine.c -o $@ -Lbuild -lgame
+
+build/libgame.a: $(OBJS)
+	ar -rc $@ $(OBJS)
+
+build/%.o: src/%.c $(wildcard include/*.h) | build
+	$(CC) $(CFLAGS) -c $< -o $@
+
+build:
+	mkdir -p build
+
 clean:
-	rm -f *.o libgame.a engine
+	rm -rf build
