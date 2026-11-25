@@ -1,4 +1,5 @@
 #include "placement.h"
+#include "input.h"
 
 // quadtree side: smallest power of 2 that holds the map
 static int tree_side(int map_size){
@@ -64,6 +65,7 @@ void place_boat_a(BOAT* b, PLAYER* pl, POINT* p, int map_size){
 			}
 		}
 	}
+	add_boat(pl,b);
 	set_hp(pl,boat_hp(b->type));
 }
 
@@ -88,6 +90,7 @@ void place_boat_q(BOAT* b, PLAYER* pl, POINT* p, int map_size){
 	}
 	free(origin);
 	free(cell);
+	add_boat(pl,b);
 	set_hp(pl,boat_hp(b->type));
 }
 
@@ -114,10 +117,10 @@ static void ask_rotation(BOAT* b){
 	int rotation = 0;
 
 	printf("What rotation do you want for the boat, 0º,90º,180º,270º,360º?\n");
-	scanf("%d", &rotation);
+	rotation = read_int();
 	while(rotation != 0 && rotation != 90 && rotation != 180 && rotation != 270 && rotation != 360){
 		printf("Impossible rotation, insert again\n");
-		scanf("%d", &rotation);
+		rotation = read_int();
 	}
 	for(int i=0; i<rotation/90; i++){
 		rotate_boat(b);

@@ -19,9 +19,10 @@ int main(int argc, char** argv){
 	else{
 		printf("Player 2 you have won\n");
 	}
-	free(e->s->p1->field);
-	free(e->s->p2->field);
+	free_player(e->s->p1,get_map_size(e->s));
+	free_player(e->s->p2,get_map_size(e->s));
 	free(e->s);
 	free(e->g);
+	free(e);
 	exit(0);
 }

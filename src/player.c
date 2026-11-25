@@ -11,6 +11,8 @@ PLAYER* new_player(int player_id, int map_size){
 	set_field(p,map_size);
 	p->qtree = new_qd_node(QDNODE);
 	p->hp = 0;
+	p->boats = NULL;
+	p->numb_boats = 0;
 	return p;
 }
 void set_id(PLAYER* p, int player_id){
@@ -28,9 +30,6 @@ void set_field(PLAYER* p, int map_size){
 	}
 	for(int i=0; i<map_size; i++){
 		p->field[i] = new_array_cell(map_size);
-		for(int j=0; j<map_size; j++){
-			p->field[i][j] = new_cell();
-		}
 	}
 }
 int get_id(PLAYER* p){
@@ -66,10 +65,12 @@ void print_field_q(PLAYER* pl, int map_size){
 	else side = 64;
 	
 	se_corner = make_point(0,0);
+	p = make_point(0,0);
 
 	for(int i=0; i<map_size; i++){
 		for(int j=0; j<map_size; j++){
-			p = make_point(j,i);
+			set2_x(p,j);
+			set2_y(p,i);
 			qd_node = search(pl->qtree,p, se_corner,side);
 			if(qd_node == NULL) printf("0");
 			else if(qd_node->node.leaf.field_pointer->state == '2'){
@@ -80,6 +81,8 @@ void print_field_q(PLAYER* pl, int map_size){
 		printf("\n");
 	}
 	printf("\n");
+	free(p);
+	free(se_corner);
 }
 
 // prints each player's map, showing the boat shapes
@@ -111,4 +114,32 @@ void print_field_p(PLAYER* p, int map_size){
 		printf("\n");
 	}
 	printf("\n");
+}
+// frees the player, its map, its quadtree and the boats still on the map
+void free_player(PLAYER* p, int map_size){
+
+	for(int i=0; i<map_size; i++){
+		for(int j=0; j<map_size; j++){
+			free(p->field[i][j]);
+		}
+		free(p->field[i]);
+	}
+	free(p->field);
+	free_qd_node(p->qtree);
+	for(int i=0; i<p->numb_boats; i++){
+		free(p->boats[i]);
+	}
+	free(p->boats);
+	free(p);
+}
+
+// remembers a boat so free_player can release it (cells forget it once hit)
+void add_boat(PLAYER* p, BOAT* b){
+
+	p->boats = (BOAT**) realloc(p->boats, (p->numb_boats+1)*sizeof(BOAT*));
+	if(p->boats == NULL){
+		printf("Error\n");
+		exit(0);
+	}
+	p->boats[p->numb_boats++] = b;
 }

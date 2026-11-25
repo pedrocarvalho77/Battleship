@@ -28,6 +28,7 @@ QD_NODE* new_qd_node(QD_TNODE);
 QD_NODE* search(QD_NODE*, POINT* , POINT*, int);
 int insert(QD_NODE*, POINT*, POINT*, int);
 int change_field_pointer(QD_NODE*);
+void free_qd_node(QD_NODE*);
 
 
 #endif

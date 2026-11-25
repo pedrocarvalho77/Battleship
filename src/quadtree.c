@@ -76,3 +76,18 @@ int change_field_pointer(QD_NODE* qtree){
 	qtree->node.leaf.field_pointer->state = '2';
 	return 1;
 }
+
+void free_qd_node(QD_NODE* qtree){
+
+	if(qtree == NULL) return;
+	if(qtree->type == QDLEAF){
+		free(qtree->node.leaf.p);
+		free(qtree->node.leaf.field_pointer);
+	}
+	else{
+		for(int i=0; i<4; i++){
+			free_qd_node(qtree->node.quadrants[i]);
+		}
+	}
+	free(qtree);
+}

@@ -32,7 +32,6 @@ void set_state(CELL* c, char cell_state){
 	c->state = cell_state;
 }
 void set_pointer_to_null(CELL* c){
-	c->boat_pointer = (BOAT*) malloc(sizeof(BOAT));
 	c->boat_pointer = NULL;
 }
 void set_pointer(CELL* c , BOAT* b){
@@ -41,7 +40,6 @@ void set_pointer(CELL* c , BOAT* b){
 		exit(0);
 	}
 	c->boat_pointer = b;
-	c->boat_pointer->type = (char*) malloc(sizeof(char));
 }
 char get_state(CELL* c){
 	return c->state;

@@ -1,5 +1,6 @@
 #include "setup.h"
 #include "placement.h"
+#include "input.h"
 
 SETUP* setup_input(){
 
@@ -57,12 +58,11 @@ void set_type_of_game(SETUP* s){
 	
 	printf("Random or manual setup?\n");
 	printf("Insert 'R' for random or 'M' for manual\n");
-	s->type_of_game = getchar();
+	s->type_of_game = read_char();
 
 	while(s->type_of_game != 'R' && s->type_of_game != 'M'){
 		printf("Wrong type of game, insert 'R' for random 'M' for manual\n");
-		getchar();
-		s->type_of_game = getchar();
+		s->type_of_game = read_char();
 	}
 }
 void set_type_of_storage(SETUP* s){
@@ -70,25 +70,22 @@ void set_type_of_storage(SETUP* s){
 	printf("QuadTree or Array?\n");
 	printf("Insert 'Q' for QuadTree or 'A' for Array\n");
 	
-	while(getchar() == '\0');
-	
-	s->type_of_storage = getchar();
+	s->type_of_storage = read_char();
 
 	while(s->type_of_storage != 'Q' && s->type_of_storage != 'A'){
 		printf("Wrong type of storage, insert 'Q' for QuadTree 'A' for Array\n");
-		getchar();
-		s->type_of_storage = getchar();
+		s->type_of_storage = read_char();
 	}
 }
 void set_map_size(SETUP* s){
 
 	if(get_type_of_game(s) == 'M'){
 		printf("Insert size of the map between 20 and 40\n");
-		scanf("%d", &s->map_size);
+		s->map_size = read_int();
 		// TODO: validate that the input is a digit
 		while(s->map_size<20 || s->map_size>40){
 			printf("Wrong size, insert again\n");
-			scanf("%d", &s->map_size);
+			s->map_size = read_int();
 		}
 	}
 	else{
@@ -121,10 +118,10 @@ void set_numb_boat_type(SETUP* s){
 		
 		printf("Insert a number between %d and %d for boat's of type ", 1, max_bound);
 		print_boat_type(boat_type);
-		scanf("%d", &num);
+		num = read_int();
 		while(num <= 0 || num > max_bound){
 			printf("Insert again a Numb between %d and %d\n", 1, max_bound);
-			scanf("%d",&num);
+			num = read_int();
 		}
 		if(max_bound == num){
 			max_bound = 1;

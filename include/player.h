@@ -10,6 +10,8 @@ typedef struct {
 	int hp;
 	CELL*** field;
 	QD_NODE* qtree;
+	BOAT** boats; // every boat placed, so they can be freed at the end
+	int numb_boats;
 
 } PLAYER;
 
@@ -22,6 +24,9 @@ void set_field(PLAYER*,int);
 
 int get_id(PLAYER*);
 int get_hp(PLAYER*); 
+
+void add_boat(PLAYER*,BOAT*);
+void free_player(PLAYER*,int);
 
 void print_id(PLAYER*);
 

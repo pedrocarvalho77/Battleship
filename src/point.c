@@ -1,4 +1,5 @@
 #include "point.h"
+#include "input.h"
 
 POINT* new_point(int map_size){
 	
@@ -16,18 +17,18 @@ POINT* new_point(int map_size){
 }
 void set_x(POINT* p, int map_size){
 	
-	scanf("%d",&p->x);
+	p->x = read_int();
 	while(p->x<0 || p->x>map_size){
 		printf("x:");
-		scanf("%d",&p->x);
+		p->x = read_int();
 	}
 }
 void set_y(POINT* p, int map_size){	
 	
-	scanf("%d",&p->y);
+	p->y = read_int();
 	while(p->y<0 || p->y>map_size){
 		printf("y:");
-		scanf("%d",&p->y);
+		p->y = read_int();
 	}
 }
 void set2_x(POINT* p, int x){
