@@ -84,7 +84,7 @@ void set_map_size(SETUP* s){
 	if(get_type_of_game(s) == 'M'){
 		printf("Insert size of the map between 20 and 40\n");
 		scanf("%d", &s->map_size);
-		//ADICIONAR IS DIGIT
+		// TODO: validate that the input is a digit
 		while(s->map_size<20 || s->map_size>40){
 			printf("Wrong size, insert again\n");
 			scanf("%d", &s->map_size);
@@ -100,7 +100,7 @@ void set_rnd_map_size(SETUP* s){
 void set_max_numb_boats(SETUP* s){
 	s->max_numb_boat = (s->map_size*s->map_size/25);
 }
-//função para definir o numero de barcos para cada tipo
+// sets the number of boats of each type
 void set_numb_boat_type(SETUP* s){
 
 	char* boat_type;
@@ -150,7 +150,7 @@ void set_numb_boat_type(SETUP* s){
 	set_total_numb_boat(s,total_boats);
 }
 
-//função para de definir aleatoriamente o numero de barcos para cada tipo
+// randomly sets the number of boats of each type
 void set_rnd_numb_boat_type(SETUP* s){
 
 	char* boat_type;
@@ -233,7 +233,7 @@ int get_total_numb_boat(SETUP* s){
 	return s->total_numb_boat;
 }
 
-//funçao que obtem coordenadas aleatorias para os barcos
+// gets random coordinates for the boats
 
 void get_rnd_boats(PLAYER* pl ,SETUP* s){
 
@@ -305,7 +305,7 @@ void get_rnd_boats(PLAYER* pl ,SETUP* s){
 
 }
 
-//função para obter coordenadas para os barcos
+// gets coordinates for the boats
 
 void get_boats(PLAYER* pl, SETUP* s){
 	
@@ -407,7 +407,7 @@ void get_boats(PLAYER* pl, SETUP* s){
 	}
 }
 
-//funçao para verificar se é possivel colocar o barco na posição pretendida
+// checks whether the boat can be placed at the chosen position
 
 int has_boat_a(POINT* p, PLAYER* pl, int map_size, BOAT* b){
 
@@ -459,7 +459,7 @@ int has_boat_q(POINT* p, PLAYER* pl, int map_size, BOAT* b){
 	return 0;
 }
 
-//função para colocar os marcos no mapa de cada jogador
+// places the boats on each player's map
 void place_boat_a(BOAT* b, PLAYER* pl, POINT* p,int map_size){
 	
 	int x = get_x(p);

@@ -13,7 +13,7 @@ typedef struct {
 
 } PLAYER;
 
-//assinatura da função para criar um jogador
+// signature of the function that creates a player
 PLAYER* new_player(int,int);
 
 void set_id(PLAYER*,int);

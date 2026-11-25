@@ -42,7 +42,7 @@ void print_id(PLAYER* p){
 	printf("Player %d\n", p->id);
 }
 
-//função parar printar o mapa de cada jogador, mas printando o estado das celulas
+// prints each player's map, showing the cell states
 void print_field_s(PLAYER* p, int map_size){
 
 	for(int i=0; i<map_size; i++){
@@ -81,7 +81,7 @@ void print_field_q(PLAYER* pl, int map_size){
 	printf("\n");
 }
 
-////função parar printar o mapa de cada jogador, mas printando os desenhos dos barcos
+// prints each player's map, showing the boat shapes
 void print_field_p(PLAYER* p, int map_size){
 
 	for(int i=0; i<map_size; i++){

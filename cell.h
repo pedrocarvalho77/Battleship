@@ -11,11 +11,11 @@ typedef struct{
 				
 } CELL;
 
-//assinatura da função para criar uma celula
+// signature of the function that creates a cell
 
-//função para criar uma celula
+// creates a cell
 CELL* new_cell();
-//função para criar um array de celulas
+// creates an array of cells
 CELL** new_array_cell(int);
 
 void set_state(CELL*, char);

@@ -21,18 +21,18 @@ GAME* play_game_a(SETUP* s){
 
 		int x,y;
 		
-		//jogada do p1
+		// player 1's turn
 		printf("Player1 ,where you want to shoot?\n");
 
 		p = new_point(get_map_size(s));
 		x = get_x(p);
 		y = get_y(p);
 
-		// '0' celula que tem como estado agua
-		// '1' celula que tem como estado peça por acertar
-		// '2' celula que tem como estado peça que ja foi acertada
-		// '3' celula que tem como estado tiro sobre agua
-		//ciclo para verificar o estado das celulas do mapa do jogador 2
+		// '0' cell state: water
+		// '1' cell state: boat piece not yet hit
+		// '2' cell state: boat piece already hit
+		// '3' cell state: shot at water
+		// loop that checks the cell states of player 2's map
 		while(s->p2->field[y][x]->state == '2' || s->p2->field[y][x]->state == '3'){
 			print_field_s(s->p2,get_map_size(s));
 			printf("You have already shotted at this position\n");
@@ -53,13 +53,13 @@ GAME* play_game_a(SETUP* s){
 		print_field_p(s->p2,get_map_size(s));
 		print_field_s(s->p2,get_map_size(s));
 		
-		//jogada do p2
+		// player 2's turn
 		printf("Player 2, where you want to shoot?\n");
 		p = new_point(get_map_size(s));
 		x = get_x(p);
 		y = get_y(p);
 		
-		//mesmo ciclo descrito acima mas agora para o jogador 1
+		// same loop as above, for player 1
 		while(s->p1->field[y][x]->state == '2' || s->p1->field[y][x]->state == '3'){
 			print_field_s(s->p1,get_map_size(s));
 			printf("You have already shotted at this position\n");
@@ -100,7 +100,7 @@ GAME* play_game_q(SETUP* s){
 		QD_NODE* qd_node = NULL;
 		POINT* se_corner;
 		
-		//jogada do p1
+		// player 1's turn
 		printf("Player1 ,where you want to shoot?\n");
 
 		p = new_point(get_map_size(s));
@@ -122,7 +122,7 @@ GAME* play_game_q(SETUP* s){
 		
 		print_field_q(s->p2,get_map_size(s));
 
-		//jogada do p2
+		// player 2's turn
 		printf("Player 2, where you want to shoot?\n");
 		p = new_point(get_map_size(s));
 

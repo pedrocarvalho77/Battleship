@@ -8,13 +8,13 @@ typedef struct{
 	char type_of_storage;
 	char type_of_game;
 	int map_size;
-	int max_numb_boat; //int para o numero maximo de barcos possiveis tendo em conta a dimensao do mapa
+	int max_numb_boat; // maximum number of boats allowed for the map size
 	int numb_boat_T;
 	int numb_boat_U;
 	int numb_boat_II;
 	int numb_boat_I;
 	int numb_boat_L;
-	int total_numb_boat; //numero total de numeros de barcos de todos tipos
+	int total_numb_boat; // total number of boats of all types
 	PLAYER* p1;
 	PLAYER* p2;
 

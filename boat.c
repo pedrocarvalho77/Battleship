@@ -84,8 +84,8 @@ int rnd_rotation(){
 	return rand() % 5;
 }
 
-//funçao para convertar um int para um char*, isto para facilitar no processamento
-//dos tipos de barcos
+// converts an int to a char*, to make boat types easier to process
+// (boat types)
 char* int_to_char(int num){
 	
 	switch(num){
