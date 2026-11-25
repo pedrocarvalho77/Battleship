@@ -33,7 +33,6 @@ void set_map_size(SETUP*);
 void set_rnd_map_size(SETUP*);
 void set_max_numb_boats(SETUP*);
 void set_numb_boat_type(SETUP*);
-void set_rnd_numb_boat_type(SETUP*);
 void set_total_numb_boat(SETUP*,int);
 
 int get_type_of_game(SETUP*);
@@ -42,17 +41,7 @@ int get_max_numb_boats(SETUP*);
 int get_numb_boat_type(SETUP*,char*);
 int get_total_numb_boat(SETUP*);
 
-void get_rnd_boats(PLAYER*,SETUP*);
-void get_boats(PLAYER*,SETUP*);
-
-int has_boat_a(POINT*,PLAYER*,int,BOAT*);
-int has_boat_q(POINT*,PLAYER*,int,BOAT*);
-
-void place_boat_a(BOAT*,PLAYER*,POINT*,int);
-void place_boat_q(BOAT*,PLAYER*,POINT*,int);
-
 int rnd_map_size();
-int rnd_numb_noat(int);
 
 void print_map_size(SETUP*);
 void print_max_numb_boats(SETUP*);

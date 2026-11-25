@@ -11,12 +11,7 @@ int main(int argc, char** argv){
 	system("clear");
 	print_logo();
 	e->s = setup_input();
-	if(e->s->type_of_storage == 'Q'){
-		e->g = play_game_q(e->s);	
-	}
-	else{
-		e->g = play_game_a(e->s);
-	}
+	e->g = play_game(e->s);
 	
 	if(e->g->winner == '1'){
 		printf("Player 1 you have won\n");

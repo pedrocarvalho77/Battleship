@@ -29,5 +29,6 @@ char* int_to_char(int);
 
 void print_boat_type(char*);
 void print_boat(BOAT*);
+int boat_hp(char*);
 
 #endif

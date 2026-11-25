@@ -28,6 +28,6 @@ Both modes play a full game. In quadtree mode the tree decides hits and misses; 
 
 ## Layout
 
-- `src/`: `engine.c` (main), `setup.c` (game setup), `game.c` (game loop), `player.c`, `boat.c`, `cell.c`, `point.c`, `quadtree.c`, `logo.c`
+- `src/`: `engine.c` (main), `setup.c` (game setup and prompts), `placement.c` (placing boats, manual and random), `game.c` (game loop), `player.c`, `boat.c`, `cell.c`, `point.c`, `quadtree.c`, `logo.c`
 - `include/`: the matching headers
 - `build/`: compiled output (git-ignored)

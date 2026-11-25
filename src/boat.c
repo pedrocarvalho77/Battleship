@@ -58,12 +58,7 @@ BOAT* new_boat(char* boat_type){
 	return b;
 }
 void set_boat_type(BOAT* b, char* t){
-	b->type = (char*) malloc(sizeof(char));
-	if(b->type == NULL){
-		printf("Error\n");
-		exit(0);
-	}
-	b->type = t;
+	b->type = t; // always a string literal, so no copy is needed
 }
 char* get_boat_type(BOAT* b){
 	return b->type;
@@ -81,7 +76,7 @@ void rotate_boat(BOAT* b){
 	}
 }
 int rnd_rotation(){
-	return rand() % 5;
+	return rand() % 4;
 }
 
 // converts an int to a char*, to make boat types easier to process
@@ -126,4 +121,14 @@ void print_boat(BOAT* b){
 		printf("\n");
 	}
 	printf("\n");
+}
+// number of pieces (and so hp) of a boat type
+int boat_hp(char* type){
+
+	if(strcmp(type,"T") == 0) return 9;
+	if(strcmp(type,"U") == 0) return 13;
+	if(strcmp(type,"||") == 0) return 10;
+	if(strcmp(type,"|") == 0) return 5;
+	if(strcmp(type,"L") == 0) return 9;
+	return 0;
 }

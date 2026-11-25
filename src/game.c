@@ -3,7 +3,10 @@
 GAME* new_game(){
 
 	GAME* g = (GAME*) malloc(sizeof(GAME));
-
+	if(g == NULL){
+		printf("Error\n");
+		exit(0);
+	}
 	return g;
 }
 void set_winner(GAME* g, char player){
@@ -12,143 +15,81 @@ void set_winner(GAME* g, char player){
 char get_winner(GAME* g){
 	return g->winner;
 }
-GAME* play_game_a(SETUP* s){
 
-	GAME* g = new_game();
-	POINT* p;
-	
-	while(s->p1->hp != 0 && s->p2->hp != 0){
+// Array mode. Cell states:
+// '0' water, '1' boat piece not yet hit, '2' boat piece already hit, '3' shot at water
+static void shoot_a(SETUP* s, PLAYER* target){
 
-		int x,y;
-		
-		// player 1's turn
-		printf("Player1 ,where you want to shoot?\n");
+	int map_size = get_map_size(s);
+	POINT* p = new_point(map_size);
+	int x = get_x(p);
+	int y = get_y(p);
 
-		p = new_point(get_map_size(s));
+	while(target->field[y][x]->state == '2' || target->field[y][x]->state == '3'){
+		print_field_s(target,map_size);
+		printf("You have already shotted at this position\n");
+		free(p);
+		p = new_point(map_size);
 		x = get_x(p);
 		y = get_y(p);
-
-		// '0' cell state: water
-		// '1' cell state: boat piece not yet hit
-		// '2' cell state: boat piece already hit
-		// '3' cell state: shot at water
-		// loop that checks the cell states of player 2's map
-		while(s->p2->field[y][x]->state == '2' || s->p2->field[y][x]->state == '3'){
-			print_field_s(s->p2,get_map_size(s));
-			printf("You have already shotted at this position\n");
-			p = new_point(get_map_size(s));
-			x = get_x(p);
-			y = get_y(p);
-		}
-		if(s->p2->field[y][x]->state == '0'){
-			printf("You haven't hitted a piece\n");
-			s->p2->field[y][x]->state = '3';
-		}
-		else if(s->p2->field[y][x]->state == '1'){
-			printf("You have hitted a piece\n");
-			s->p2->field[y][x]->state = '2';
-			s->p2->field[y][x]->boat_pointer = NULL;
-			set_hp(s->p2,-1);
-		}
-		print_field_p(s->p2,get_map_size(s));
-		print_field_s(s->p2,get_map_size(s));
-		
-		// player 2's turn
-		printf("Player 2, where you want to shoot?\n");
-		p = new_point(get_map_size(s));
-		x = get_x(p);
-		y = get_y(p);
-		
-		// same loop as above, for player 1
-		while(s->p1->field[y][x]->state == '2' || s->p1->field[y][x]->state == '3'){
-			print_field_s(s->p1,get_map_size(s));
-			printf("You have already shotted at this position\n");
-			p = new_point(get_map_size(s));
-			x = get_x(p);
-			y = get_y(p);
-		}
-		if(s->p1->field[y][x]->state == '0'){
-			printf("You haven't hitted a piece\n");
-			s->p1->field[y][x]->state = '3';
-		}
-		else if(s->p1->field[y][x]->state == '1'){
-			printf("You have hitted a piece\n");
-			s->p1->field[y][x]->state = '2';
-			set_hp(s->p1,-1);
-		}
-		print_field_p(s->p1,get_map_size(s));
-		print_field_s(s->p1,get_map_size(s));
 	}
-	if(s->p1->hp == 0){
-		g->winner = '2';
-	}
-	else{
-		g->winner = '1';
-	}
-	return g;
-
 	free(p);
-}
-GAME* play_game_q(SETUP* s){
 
-	GAME* g = new_game();
-	POINT* p;
-	
-	while(s->p1->hp != 0 && s->p2->hp != 0){
-
-		int side;
-		QD_NODE* qd_node = NULL;
-		POINT* se_corner;
-		
-		// player 1's turn
-		printf("Player1 ,where you want to shoot?\n");
-
-		p = new_point(get_map_size(s));
-
-		if(get_map_size(s) <= 32) side = 32;
-		else side = 64;
-
-		se_corner = make_point(0,0);
-
-		qd_node = search(s->p2->qtree, p,se_corner,side);
-		if(qd_node == NULL || qd_node->type != QDLEAF || qd_node->node.leaf.field_pointer->state == '2'){
-			printf("You haven't hitted a piece\n");
-		}
-		else{
-			printf("You have hitted a piece\n");
-			change_field_pointer(qd_node);
-			set_hp(s->p2,-1);
-		}
-		
-		print_field_q(s->p2,get_map_size(s));
-
-		// player 2's turn
-		printf("Player 2, where you want to shoot?\n");
-		p = new_point(get_map_size(s));
-
-		if(get_map_size(s) <= 32) side = 32;
-		else side = 64;
-
-		se_corner = make_point(0,0);
-
-		qd_node = search(s->p1->qtree, p,se_corner,side);
-		if(qd_node == NULL || qd_node->type != QDLEAF || qd_node->node.leaf.field_pointer->state == '2'){
-			printf("You haven't hitted a piece\n");
-		}
-		else{
-			printf("You have hitted a piece\n");
-			change_field_pointer(qd_node);
-			set_hp(s->p1,-1);
-		}
-
-		print_field_q(s->p1,get_map_size(s));
-
-	}
-	if(s->p1->hp == 0){
-		g->winner = '2';
+	if(target->field[y][x]->state == '0'){
+		printf("You haven't hitted a piece\n");
+		target->field[y][x]->state = '3';
 	}
 	else{
-		g->winner = '1';
+		printf("You have hitted a piece\n");
+		target->field[y][x]->state = '2';
+		target->field[y][x]->boat_pointer = NULL;
+		set_hp(target,-1);
 	}
-	return g;
+	print_field_p(target,map_size);
+	print_field_s(target,map_size);
+}
+
+// Quadtree mode: the tree decides whether the shot hits a piece
+static void shoot_q(SETUP* s, PLAYER* target){
+
+	int map_size = get_map_size(s);
+	int side = (map_size <= 32) ? 32 : 64;
+	POINT* p = new_point(map_size);
+	POINT* origin = make_point(0,0);
+	QD_NODE* leaf = search(target->qtree, p, origin, side);
+
+	if(leaf == NULL || leaf->type != QDLEAF || leaf->node.leaf.field_pointer->state == '2'){
+		printf("You haven't hitted a piece\n");
+	}
+	else{
+		printf("You have hitted a piece\n");
+		change_field_pointer(leaf);
+		set_hp(target,-1);
+	}
+	free(p);
+	free(origin);
+	print_field_q(target,map_size);
+}
+
+// Players take turns; the game ends as soon as one player's boats are all hit
+GAME* play_game(SETUP* s){
+
+	GAME* g = new_game();
+	PLAYER* players[2] = {s->p1, s->p2};
+	int turn = 0;
+
+	while(1){
+		PLAYER* shooter = players[turn];
+		PLAYER* target = players[1-turn];
+
+		printf("Player %d, where you want to shoot?\n", get_id(shooter));
+		if(s->type_of_storage == 'Q') shoot_q(s,target);
+		else shoot_a(s,target);
+
+		if(target->hp == 0){
+			g->winner = '1' + turn;
+			return g;
+		}
+		turn = 1-turn;
+	}
 }

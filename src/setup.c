@@ -1,4 +1,5 @@
 #include "setup.h"
+#include "placement.h"
 
 SETUP* setup_input(){
 
@@ -100,6 +101,12 @@ void set_rnd_map_size(SETUP* s){
 void set_max_numb_boats(SETUP* s){
 	s->max_numb_boat = (s->map_size*s->map_size/25);
 }
+// pointer to the setup counter of the i-th boat type (T, U, ||, |, L)
+static int* boat_count(SETUP* s, int i){
+	int* counts[5] = {&s->numb_boat_T, &s->numb_boat_U, &s->numb_boat_II, &s->numb_boat_I, &s->numb_boat_L};
+	return counts[i];
+}
+
 // sets the number of boats of each type
 void set_numb_boat_type(SETUP* s){
 
@@ -108,10 +115,9 @@ void set_numb_boat_type(SETUP* s){
 	int total_boats = 0;
 	int max_bound = get_max_numb_boats(s)-4;
 
-	boat_type = (char*) malloc(sizeof(char));
 	for(int i=0; i<5;i++){
-		
-		strcpy(boat_type,int_to_char(i));
+
+		boat_type = int_to_char(i);
 		
 		printf("Insert a number between %d and %d for boat's of type ", 1, max_bound);
 		print_boat_type(boat_type);
@@ -127,77 +133,11 @@ void set_numb_boat_type(SETUP* s){
 		}
 		total_boats = total_boats + num;
 		printf("Total number of boats yet: %d\n", total_boats);
-		switch(i){
-			case 0:
-				s->numb_boat_T=num;
-				break;
-			case 1:
-				s->numb_boat_U=num;
-				break;
-			case 2:
-				s->numb_boat_II=num;
-				break;
-			case 3:
-				s->numb_boat_I=num;
-				break;
-			case 4:
-				s->numb_boat_L=num;
-				break;
-			default:
-				break;
-		}
+		*boat_count(s,i) = num;
 	}
 	set_total_numb_boat(s,total_boats);
 }
 
-// randomly sets the number of boats of each type
-void set_rnd_numb_boat_type(SETUP* s){
-
-	char* boat_type;
-	int num = 0;
-	int total_boats = 0;
-	int max_bound = get_max_numb_boats(s)-4;
-	
-	boat_type = (char*) malloc(sizeof(char));
-	for(int i=0; i<5; i++){
-
-		strcpy(boat_type,int_to_char(i));
-		num = rnd_numb_noat(max_bound);
-		if(num > (get_max_numb_boats(s)/2)){
-			num = rnd_numb_noat(max_bound);
-		}
-		printf("%d boat's of type ", num);
-		print_boat_type(boat_type);
-		if(max_bound == num){
-			max_bound = 1;
-		}
-		else{
-			max_bound = max_bound - num;
-		}
-		total_boats = total_boats + num;
-		printf("Total number of boats yet: %d\n", total_boats);
-		switch(i){
-			case 0:
-				s->numb_boat_T=num;
-				break;
-			case 1:
-				s->numb_boat_U=num;
-				break;
-			case 2:
-				s->numb_boat_II=num;
-				break;
-			case 3:
-				s->numb_boat_I=num;
-				break;
-			case 4:
-				s->numb_boat_L=num;
-				break;
-			default:
-				break;
-		}
-	}	
-	set_total_numb_boat(s,total_boats);
-}
 void set_total_numb_boat(SETUP* s, int total){
 	s->total_numb_boat = total;
 }
@@ -233,305 +173,8 @@ int get_total_numb_boat(SETUP* s){
 	return s->total_numb_boat;
 }
 
-// gets random coordinates for the boats
-
-void get_rnd_boats(PLAYER* pl ,SETUP* s){
-
-	POINT* p;
-	BOAT* b;
-	char* boat_type;
-	int numb_boat_type = 0;
-	int rotation = 0;
-	int aux_p = 0;
-	
-		boat_type = (char*) malloc(sizeof(char));
-		printf("Generating boats for the player %d\n", get_id(pl));
-
-		for(int i=0; i<5; i++){
-			
-			strcpy(boat_type,int_to_char(i));
-			numb_boat_type = get_numb_boat_type(s,boat_type);
-			
-			printf("Player %d has %d boats type ",get_id(pl),numb_boat_type);
-			print_boat_type(boat_type);
-
-			for(int j=0;j<numb_boat_type;j++){
-
-				b = new_boat(boat_type);
-				p = rnd_point(get_map_size(s));
-				rotation = rnd_rotation();
-				
-				for(int i=0; i<rotation; i++){
-					rotate_boat(b);
-				}
-				if(s->type_of_storage == 'A'){
-					aux_p = has_boat_a(p,pl,get_map_size(s),b);
-
-					while(aux_p == 1 || aux_p == 2){	
-						
-						p = rnd_point(get_map_size(s));
-						rotation = rnd_rotation();
-						for(int i=0; i<rotation; i++){
-							rotate_boat(b);
-						}
-						aux_p = has_boat_a(p,pl,get_map_size(s),b);
-					}
-				}
-				else{
-					aux_p = has_boat_q(p,pl,get_map_size(s),b);
-
-					while(aux_p == 1 || aux_p == 2){	
-						
-						p = rnd_point(get_map_size(s));
-						rotation = rnd_rotation();
-						for(int i=0; i<rotation; i++){
-							rotate_boat(b);
-						}
-						aux_p = has_boat_q(p,pl,get_map_size(s),b);
-					}
-				}
-				aux_p = 0;
-				print_boat(b);
-				print_point(p);
-			if(s->type_of_storage == 'A'){
-				place_boat_a(b,pl,p,get_map_size(s));
-			}
-			else{
-				place_boat_q(b,pl,p,get_map_size(s));
-			}
-				print_field_p(pl,get_map_size(s));
-			}
-		}
-
-}
-
-// gets coordinates for the boats
-
-void get_boats(PLAYER* pl, SETUP* s){
-	
-	POINT* p;
-	BOAT* b;
-	char* boat_type;
-	int numb_boat_type = 0;
-	int rotation = 0;
-	int aux_p = 0;
-
-	boat_type = (char*) malloc(sizeof(char));
-
-	printf("\nPlayer %d, place your boats\n", get_id(pl));
-	printf("Player %d, has %d boats type ",get_id(pl), numb_boat_type);
-	print_boat_type(boat_type);
-
-	for(int i=0; i<5; i++){
-		strcpy(boat_type,int_to_char(i));
-		numb_boat_type = get_numb_boat_type(s,boat_type);
-		for(int j=0;j<numb_boat_type;j++){
-
-			b = new_boat(boat_type);		
-			printf("Where do you want to place boat number %d of type ", (j+1));
-			print_boat_type(boat_type);
-			
-			p = new_point(get_map_size(s));
-			
-			printf("What rotation do you want for the boat, 0º,90º,180º,270º, 360º?\n");
-			scanf("%d", &rotation);
-			
-			while(rotation != 0 && rotation != 90 && rotation != 180 && rotation != 270 && rotation != 360){
-				printf("Impossible rotation, insert again\n");
-				scanf("%d", &rotation);
-			}
-			rotation = rotation/90;
-			for(int i=0; i<rotation; i++){
-				rotate_boat(b);
-			}
-
-			if(s->type_of_storage == 'A'){
-				aux_p = has_boat_a(p,pl,get_map_size(s),b);
-				
-				while(aux_p == 1 || aux_p == 2){	
-					if(aux_p == 1){
-						printf("You already have a boat in that position, insert again\n");
-					}
-					else{
-						printf("Outside the map boundaries, enter again\n");	
-					}
-					p = new_point(get_map_size(s));
-					printf("What rotation do you want for the boat, 0º,90º,180º,270º,360º?\n");
-					scanf("%d", &rotation);
-				
-					while(rotation != 0 && rotation != 90 && rotation != 180 && rotation != 270 && rotation != 360){
-						printf("Impossible rotation, insert again\n");
-						scanf("%d", &rotation);
-					}
-					rotation = rotation/90;
-					for(int i=0; i<rotation; i++){
-						rotate_boat(b);
-					}
-					aux_p = has_boat_a(p,pl,get_map_size(s),b);
-				}
-			}
-			else{
-				aux_p = has_boat_q(p,pl,get_map_size(s),b);
-				while(aux_p == 1 || aux_p == 2){	
-					if(aux_p == 1){
-						printf("You already have a boat in that position, insert again\n");
-					}
-					else{
-						printf("Outside the map boundaries, enter again\n");	
-					}
-					p = new_point(get_map_size(s));
-					printf("What rotation do you want for the boat, 0º,90º,180º,270º,360º?\n");
-					scanf("%d", &rotation);
-				
-					while(rotation != 0 && rotation != 90 && rotation != 180 && rotation != 270 && rotation != 360){
-						printf("Impossible rotation, insert again\n");
-						scanf("%d", &rotation);
-					}
-					rotation = rotation/90;
-					for(int i=0; i<rotation; i++){
-						rotate_boat(b);
-					}
-					aux_p = has_boat_q(p,pl,get_map_size(s),b);
-				}
-			}
-			print_boat(b);
-			aux_p = 0;
-			if(s->type_of_storage == 'A'){
-				place_boat_a(b,pl,p,get_map_size(s));
-			}
-			else{
-				place_boat_q(b,pl,p,get_map_size(s));
-			}
-				print_field_p(pl,get_map_size(s));
-		}
-	}
-}
-
-// checks whether the boat can be placed at the chosen position
-
-int has_boat_a(POINT* p, PLAYER* pl, int map_size, BOAT* b){
-
-	int x = get_x(p);
-	int y = get_y(p);
-	for(int i=0;i<5; i++){
-		for(int j=0;j<5;j++){
-			if(y+i >= map_size || x+j >= map_size){
-				return 2;
-			}
-			if(pl->field[y+i][x+j]->boat_pointer != NULL){
-				return 1;
-			}
-		}
-	}
-	return 0;
-}
-
-int has_boat_q(POINT* p, PLAYER* pl, int map_size, BOAT* b){
-
-	int x = get_x(p);
-	int y = get_y(p);
-	int side = (map_size <= 32) ? 32 : 64;
-	POINT* origin = make_point(0,0);
-	POINT* cell = make_point(0,0);
-
-	for(int i=0;i<5; i++){
-		for(int j=0;j<5;j++){
-			if(y+i >= map_size || x+j >= map_size){
-				return 2;
-			}
-			set2_x(cell,x+j);
-			set2_y(cell,y+i);
-			if(b->bitmap[i][j] == '1' && search(pl->qtree, cell, origin, side) != NULL){
-				return 1;
-			}
-		}
-	}
-	return 0;
-}
-
-// places the boats on each player's map
-void place_boat_a(BOAT* b, PLAYER* pl, POINT* p,int map_size){
-	
-	int x = get_x(p);
-	int y = get_y(p);
-	int max_x;
-	int max_y;
-	if(x>=(map_size-5) || y>=(map_size-5)){
-		max_x = map_size-x;
-		max_y = map_size-y;
-	}
-	else{
-		max_x = 5;
-		max_y = 5;
-	}
-	for(int i=0; i<max_y;i++){
-		x = get_x(p);
-		for(int j=0; j<max_x; j++){
-			if(b->bitmap[i][j] == '1'){
-				pl->field[y][x]->boat_pointer = b;
-				pl->field[y][x]->state = '1';
-			}
-			x++;
-		}
-		y++;
-	}
-	if(strcmp(b->type,"T") == 0){
-		set_hp(pl,9);
-	}
-	else if(strcmp(b->type,"U") == 0){
-		set_hp(pl,13);
-	}
-	else if(strcmp(b->type,"||") == 0){
-		set_hp(pl,10);
-	}
-	else if(strcmp(b->type,"|") == 0){
-		set_hp(pl,5);
-	}
-	else if(strcmp(b->type,"L") == 0){
-		set_hp(pl,9);
-	}
-}
-void place_boat_q(BOAT* b, PLAYER* pl, POINT* p, int map_size){
-
-	int x = get_x(p);
-	int y = get_y(p);
-	int side = (map_size <= 32) ? 32 : 64;
-	POINT* origin = make_point(0,0);
-	POINT* cell = make_point(0,0);
-
-	for(int i=0; i<5; i++){
-		for(int j=0; j<5; j++){
-			if(b->bitmap[i][j] == '1'){
-				set2_x(cell,x+j);
-				set2_y(cell,y+i);
-				insert(pl->qtree, cell, origin, side);
-				// the array map is kept only to draw the boats on screen
-				pl->field[y+i][x+j]->boat_pointer = b;
-			}
-		}
-	}
-
-	if(strcmp(b->type,"T") == 0){
-		set_hp(pl,9);
-	}
-	else if(strcmp(b->type,"U") == 0){
-		set_hp(pl,13);
-	}
-	else if(strcmp(b->type,"||") == 0){
-		set_hp(pl,10);
-	}
-	else if(strcmp(b->type,"|") == 0){
-		set_hp(pl,5);
-	}
-	else if(strcmp(b->type,"L") == 0){
-		set_hp(pl,9);
-	}
-}
 int rnd_map_size(){
 	return (20 + rand() % 21);
-}
-int rnd_numb_noat(int max){
-	return (1 + rand() % max);
 }
 void print_map_size(SETUP* s){
 	printf("The map has a size of [%dx%d]\n", get_map_size(s),get_map_size(s));

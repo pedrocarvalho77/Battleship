@@ -15,7 +15,6 @@ void set_winner(GAME*,char);
 
 char get_winner(GAME*);
 
-GAME* play_game_a(SETUP*);
-GAME* play_game_q(SETUP*);
+GAME* play_game(SETUP*);
 
 #endif
