@@ -9,6 +9,7 @@ PLAYER* new_player(int player_id, int map_size){
 	} 
 	set_id(p,player_id);
 	set_field(p,map_size);
+	p->qtree = new_qd_node(QDNODE);
 	p->hp = 0;
 	return p;
 }
@@ -64,15 +65,15 @@ void print_field_q(PLAYER* pl, int map_size){
 	if(map_size <= 32) side = 32;
 	else side = 64;
 	
-	se_corner = make_point(side,side);
+	se_corner = make_point(0,0);
 
 	for(int i=0; i<map_size; i++){
 		for(int j=0; j<map_size; j++){
-			p = make_point(i,j);
+			p = make_point(j,i);
 			qd_node = search(pl->qtree,p, se_corner,side);
 			if(qd_node == NULL) printf("0");
-			else if(qd_node->node.leaf.field_pointer->state == 3){
-				printf("3");
+			else if(qd_node->node.leaf.field_pointer->state == '2'){
+				printf("2");
 			}
 			else printf("0");
 		}		

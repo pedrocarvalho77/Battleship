@@ -24,7 +24,7 @@ make clean
 
 At startup the game asks whether to store the map in arrays (`A`) or quadtrees (`Q`).
 
-**Known state:** array mode (`A`) works end to end. Quadtree mode (`Q`) is unfinished: each player's tree is never initialised, so no boats are recorded and no shot can hit. Use `A`.
+Both modes play a full game. In quadtree mode the tree decides hits and misses; the array map is only used to draw the boats during setup.
 
 ## Layout
 

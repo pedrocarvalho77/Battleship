@@ -24,7 +24,7 @@ typedef struct QD_Node_ {
 
 } QD_NODE;
 
-QD_NODE* new_qd_node();
+QD_NODE* new_qd_node(QD_TNODE);
 QD_NODE* search(QD_NODE*, POINT* , POINT*, int);
 int insert(QD_NODE*, POINT*, POINT*, int);
 int change_field_pointer(QD_NODE*);

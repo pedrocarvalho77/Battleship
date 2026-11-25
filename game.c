@@ -108,10 +108,10 @@ GAME* play_game_q(SETUP* s){
 		if(get_map_size(s) <= 32) side = 32;
 		else side = 64;
 
-		se_corner = make_point(side,side);
+		se_corner = make_point(0,0);
 
 		qd_node = search(s->p2->qtree, p,se_corner,side);
-		if(qd_node == NULL || qd_node->type != QDLEAF || qd_node->node.leaf.field_pointer->state == 3){
+		if(qd_node == NULL || qd_node->type != QDLEAF || qd_node->node.leaf.field_pointer->state == '2'){
 			printf("You haven't hitted a piece\n");
 		}
 		else{
@@ -129,10 +129,10 @@ GAME* play_game_q(SETUP* s){
 		if(get_map_size(s) <= 32) side = 32;
 		else side = 64;
 
-		se_corner = make_point(side,side);
+		se_corner = make_point(0,0);
 
 		qd_node = search(s->p1->qtree, p,se_corner,side);
-		if(qd_node == NULL || qd_node->type != QDLEAF || qd_node->node.leaf.field_pointer->state == 3){
+		if(qd_node == NULL || qd_node->type != QDLEAF || qd_node->node.leaf.field_pointer->state == '2'){
 			printf("You haven't hitted a piece\n");
 		}
 		else{

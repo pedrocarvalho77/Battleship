@@ -1,101 +1,78 @@
 #include "quadtree.h"
 
-QD_NODE* new_qd_node(QD_TNODE  type){
+// A node covers the square [corner, corner+side) in both axes; side is a power of 2.
+// Leaves live at side == 1 and represent one map cell.
 
-	QD_NODE* qd_node = (QD_NODE*) malloc(sizeof(QD_NODE));
+QD_NODE* new_qd_node(QD_TNODE type){
 
-    if(qd_node == NULL){
-        printf("Error\n");
-        exit(0);
-    }
+	QD_NODE* qd_node = (QD_NODE*) calloc(1, sizeof(QD_NODE));
+
+	if(qd_node == NULL){
+		printf("Error\n");
+		exit(0);
+	}
 	qd_node->type = type;
 
-    return qd_node;
+	return qd_node;
 }
 
-QD_NODE* search(QD_NODE* qtree, POINT* p, POINT* se_corner, int side){
-
-    POINT* newcorner;
-    POINT* mi = make_point(get_x(se_corner) - side/2, get_y(se_corner) - side/2);
-	
-    if(qtree == NULL) return NULL;
-
-        if(in_square(p, se_corner,side) == 1){
-            newcorner = make_point(get_x(se_corner),get_y(mi));
-            if(in_square(p, newcorner,side/2) == 1){
-                return search(qtree->node.quadrants[0], p, newcorner, side/2);
-		    }
-            
-            newcorner = make_point(get_x(mi),get_y(mi));
-            if(in_square(p, newcorner,side/2) == 1){
-                return search(qtree->node.quadrants[1], p, newcorner, side/2);
-            }
-            
-            newcorner = make_point(get_x(mi),get_y(se_corner));
-            if(in_square(p, newcorner,side/2) == 1){
-                return search(qtree->node.quadrants[2], p, newcorner, side/2);
-            }
-            
-            newcorner = make_point(get_x(se_corner),get_y(se_corner));
-            if(in_square(p, newcorner,side/2) == 1){
-                return search(qtree->node.quadrants[3], p, newcorner, side/2);
-            }
-            return qtree;
-        }
-    return NULL;
+static int inside(POINT* p, POINT* corner, int side){
+	return get_x(p) >= get_x(corner) && get_x(p) < get_x(corner) + side &&
+	       get_y(p) >= get_y(corner) && get_y(p) < get_y(corner) + side;
 }
 
-int insert(QD_NODE* qtree, POINT* p, POINT* se_corner, int side){
+// returns the leaf at p, or NULL if there is none
+QD_NODE* search(QD_NODE* qtree, POINT* p, POINT* corner, int side){
 
-    CELL* c;
-    POINT* newcorner;
-    POINT* mi = make_point(get_x(se_corner) - side/2, get_y(se_corner) - side/2);
+	int cx = get_x(corner);
+	int cy = get_y(corner);
 
-        if(in_square(p, se_corner,side) == 1){
-            newcorner = make_point(get_x(se_corner),get_y(mi));
-            if(in_square(p, newcorner,side/2) == 1){
-                if(qtree->node.quadrants[0] == NULL){
-                    qtree->node.quadrants[0] = new_qd_node(QDNODE);
-                }
-                return insert(qtree->node.quadrants[0], p, newcorner, side/2);
-            }
-            
-            newcorner = make_point(get_x(mi),get_y(mi));
-            if(in_square(p, newcorner,side/2) == 1){
-                if(qtree->node.quadrants[1] == NULL){
-                     qtree->node.quadrants[1] = new_qd_node(QDNODE);
-                }
-                return insert(qtree->node.quadrants[1], p, newcorner, side/2);
-            }
-            
-            newcorner = make_point(get_x(mi),get_y(se_corner));
-            if(in_square(p, newcorner,side/2) == 1){
-                if(qtree->node.quadrants[2] == NULL){
-                     qtree->node.quadrants[2] = new_qd_node(QDNODE);
-                }
-                return insert(qtree->node.quadrants[2], p, newcorner, side/2);
-            }
-            
-            newcorner = make_point(get_x(se_corner),get_y(se_corner));
-            if(in_square(p, newcorner,side/2) == 1){
-                if(qtree->node.quadrants[3] == NULL){
-                    qtree->node.quadrants[3] = new_qd_node(QDNODE);
-                }
-                return insert(qtree->node.quadrants[3], p, newcorner, side/2);
-            }
-            qtree->type = QDLEAF;
-            qtree->node.leaf.p = p;
-            c = new_cell();
-            set_state(c,'1');
-            qtree->node.leaf.field_pointer = c;
-            return 1;
-        }
-    return 0;
+	while(qtree != NULL){
+		POINT c = {cx, cy};
+		if(!inside(p, &c, side)) return NULL;
+		if(side == 1) return qtree->type == QDLEAF ? qtree : NULL;
+		int half = side/2;
+		int q = (get_x(p) >= cx + half) + 2*(get_y(p) >= cy + half);
+		if(q & 1) cx += half;
+		if(q & 2) cy += half;
+		side = half;
+		qtree = qtree->node.quadrants[q];
+	}
+	return NULL;
 }
 
+// inserts a leaf at p; returns 1 if inserted, 0 if outside the tree or already present
+int insert(QD_NODE* qtree, POINT* p, POINT* corner, int side){
+
+	int cx = get_x(corner);
+	int cy = get_y(corner);
+	POINT c = {cx, cy};
+
+	if(qtree == NULL || !inside(p, &c, side)) return 0;
+
+	while(side > 1){
+		int half = side/2;
+		int q = (get_x(p) >= cx + half) + 2*(get_y(p) >= cy + half);
+		if(q & 1) cx += half;
+		if(q & 2) cy += half;
+		side = half;
+		if(qtree->node.quadrants[q] == NULL){
+			qtree->node.quadrants[q] = new_qd_node(QDNODE);
+		}
+		qtree = qtree->node.quadrants[q];
+	}
+	if(qtree->type == QDLEAF) return 0;
+	qtree->type = QDLEAF;
+	qtree->node.leaf.p = make_point(get_x(p), get_y(p));
+	qtree->node.leaf.field_pointer = new_cell();
+	set_state(qtree->node.leaf.field_pointer, '1');
+	return 1;
+}
+
+// marks the piece in the leaf as hit
 int change_field_pointer(QD_NODE* qtree){
 
-    if(qtree == NULL) return 0;
-    qtree->node.leaf.field_pointer->state= 3;
-    return 1;
+	if(qtree == NULL || qtree->type != QDLEAF) return 0;
+	qtree->node.leaf.field_pointer->state = '2';
+	return 1;
 }

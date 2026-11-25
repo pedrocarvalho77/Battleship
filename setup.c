@@ -428,30 +428,20 @@ int has_boat_a(POINT* p, PLAYER* pl, int map_size, BOAT* b){
 
 int has_boat_q(POINT* p, PLAYER* pl, int map_size, BOAT* b){
 
-	int side;
-	int x; 
-	int y;
-	
-	QD_NODE* qd_node;
-	POINT* se_corner;
-	POINT* aux_p;
-
-	x = get_x(p);
-	y = get_y(p);
-
-	if(map_size <= 32) side = 32;
-	else side = 64;
-	
-	se_corner = make_point(side,side);
-	aux_p = make_point(x,y);
+	int x = get_x(p);
+	int y = get_y(p);
+	int side = (map_size <= 32) ? 32 : 64;
+	POINT* origin = make_point(0,0);
+	POINT* cell = make_point(0,0);
 
 	for(int i=0;i<5; i++){
 		for(int j=0;j<5;j++){
-			qd_node = search(qd_node, aux_p,se_corner,side);
 			if(y+i >= map_size || x+j >= map_size){
 				return 2;
 			}
-			if(qd_node != NULL && b->bitmap[i][j] == '1'){
+			set2_x(cell,x+j);
+			set2_y(cell,y+i);
+			if(b->bitmap[i][j] == '1' && search(pl->qtree, cell, origin, side) != NULL){
 				return 1;
 			}
 		}
@@ -503,23 +493,20 @@ void place_boat_a(BOAT* b, PLAYER* pl, POINT* p,int map_size){
 }
 void place_boat_q(BOAT* b, PLAYER* pl, POINT* p, int map_size){
 
-	int side;
 	int x = get_x(p);
 	int y = get_y(p);
-	POINT* se_corner;
-	POINT* aux_p;
-	if(map_size <= 32) side = 32;
-	else side = 64;
-	
-	aux_p = make_point(0,0);
-	se_corner = make_point(side,side);
-	
+	int side = (map_size <= 32) ? 32 : 64;
+	POINT* origin = make_point(0,0);
+	POINT* cell = make_point(0,0);
+
 	for(int i=0; i<5; i++){
-		set2_x(aux_p,x+i);
 		for(int j=0; j<5; j++){
-			set2_y(aux_p,y+j);
 			if(b->bitmap[i][j] == '1'){
-				insert(pl->qtree, aux_p, se_corner, side);
+				set2_x(cell,x+j);
+				set2_y(cell,y+i);
+				insert(pl->qtree, cell, origin, side);
+				// the array map is kept only to draw the boats on screen
+				pl->field[y+i][x+j]->boat_pointer = b;
 			}
 		}
 	}
