@@ -113,7 +113,7 @@ void set_numb_boat_type(SETUP* s){
 		
 		strcpy(boat_type,int_to_char(i));
 		
-		printf("Insert a nº between %d and %d for boat's of type ", 1, max_bound);
+		printf("Insert a number between %d and %d for boat's of type ", 1, max_bound);
 		print_boat_type(boat_type);
 		scanf("%d", &num);
 		while(num <= 0 || num > max_bound){
