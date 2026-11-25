@@ -4,15 +4,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-//struct do tipo coordenada
+// coordinate struct
 typedef struct{
 							 
-	int x;	//cordenada x 			
-	int y;	//cordenada y	 	
+	int x;	// x coordinate 			
+	int y;	// y coordinate	 	
 						
 } POINT;
 
-//assinatura da funções para criar coordenadas
+// signatures of the functions that create coordinates
 
 POINT* new_point(int);
 void set_x(POINT*,int);
@@ -23,14 +23,14 @@ void set2_y(POINT* p, int y);
 int get_x(POINT*);
 int get_y(POINT*);
 
-//função que retorna uma coordenada dentro do tamanho do mapa
+// returns a coordinate inside the map size
 
 POINT* rnd_point(int);
 
 POINT* make_point(int,int);
 POINT* add_point(POINT* p, POINT* q);
 int is_equal(POINT* p,POINT* q); 
-int in_square(POINT* p, POINT* corner, int side); //verifica se p está no quadrado definido por (corner,side)
+int in_square(POINT* p, POINT* corner, int side); // checks whether p is inside the square defined by (corner, side)
 
 void print_point(POINT*);
 

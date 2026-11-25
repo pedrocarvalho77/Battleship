@@ -58,16 +58,33 @@ BOAT* new_boat(char* boat_type){
 	return b;
 }
 void set_boat_type(BOAT* b, char* t){
-	b->type = (char*) malloc(sizeof(char));
-	if(b->type == NULL){
-		printf("Error\n");
-		exit(0);
-	}
-	b->type = t;
+	b->type = t; // always a string literal, so no copy is needed
 }
 char* get_boat_type(BOAT* b){
 	return b->type;
 }
+// moves the shape to the top-left corner of the 5x5 bitmap, so that the position
+// chosen by the player is the corner of the visible boat
+static void shift_boat(BOAT* b){
+
+	int up = 5, left = 5;
+
+	for(int i=0; i<5; i++){
+		for(int j=0; j<5; j++){
+			if(b->bitmap[i][j] == '1'){
+				if(i < up) up = i;
+				if(j < left) left = j;
+			}
+		}
+	}
+	if(up == 5 || (up == 0 && left == 0)) return;
+	for(int i=0; i<5; i++){
+		for(int j=0; j<5; j++){
+			b->bitmap[i][j] = (i+up < 5 && j+left < 5) ? b->bitmap[i+up][j+left] : '0';
+		}
+	}
+}
+
 void rotate_boat(BOAT* b){
 
 	for(int i=0; i<5/2; i++){ 
@@ -79,13 +96,15 @@ void rotate_boat(BOAT* b){
 			b->bitmap[j][5-1-i] = aux; 
 		}	 
 	}
-}
-int rnd_rotation(){
-	return rand() % 5;
+	shift_boat(b);
 }
 
-//funçao para convertar um int para um char*, isto para facilitar no processamento
-//dos tipos de barcos
+int rnd_rotation(){
+	return rand() % 4;
+}
+
+// converts an int to a char*, to make boat types easier to process
+// (boat types)
 char* int_to_char(int num){
 	
 	switch(num){
@@ -126,4 +145,14 @@ void print_boat(BOAT* b){
 		printf("\n");
 	}
 	printf("\n");
+}
+// number of pieces (and so hp) of a boat type
+int boat_hp(char* type){
+
+	if(strcmp(type,"T") == 0) return 9;
+	if(strcmp(type,"U") == 0) return 13;
+	if(strcmp(type,"||") == 0) return 10;
+	if(strcmp(type,"|") == 0) return 5;
+	if(strcmp(type,"L") == 0) return 9;
+	return 0;
 }
