@@ -42,47 +42,23 @@ void print_id(PLAYER* p){
 	printf("Player %d\n", p->id);
 }
 
-// prints each player's map, showing the cell states
-void print_field_s(PLAYER* p, int map_size){
+// prints what the shooter knows about the target's waters: X hit, o miss, . unknown
+void print_field_shots(PLAYER* target, int map_size){
 
+	printf("   ");
+	for(int j=0; j<map_size; j++){
+		printf("%d ", j%10);
+	}
+	printf("\n");
 	for(int i=0; i<map_size; i++){
+		printf("%2d ", i);
 		for(int j=0; j<map_size; j++){
-				printf("%c", p->field[i][j]->state);
+			char state = target->field[i][j]->state;
+			printf("%c ", state == '2' ? 'X' : state == '3' ? 'o' : '.');
 		}
 		printf("\n");
 	}
 	printf("\n");
-}
-
-void print_field_q(PLAYER* pl, int map_size){
-
-	int side;
-	POINT* se_corner;
-	POINT* p;
-	QD_NODE* qd_node;
-
-	if(map_size <= 32) side = 32;
-	else side = 64;
-	
-	se_corner = make_point(0,0);
-	p = make_point(0,0);
-
-	for(int i=0; i<map_size; i++){
-		for(int j=0; j<map_size; j++){
-			set2_x(p,j);
-			set2_y(p,i);
-			qd_node = search(pl->qtree,p, se_corner,side);
-			if(qd_node == NULL) printf("0");
-			else if(qd_node->node.leaf.field_pointer->state == '2'){
-				printf("2");
-			}
-			else printf("0");
-		}		
-		printf("\n");
-	}
-	printf("\n");
-	free(p);
-	free(se_corner);
 }
 
 // prints each player's map, showing the boat shapes

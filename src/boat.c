@@ -63,6 +63,28 @@ void set_boat_type(BOAT* b, char* t){
 char* get_boat_type(BOAT* b){
 	return b->type;
 }
+// moves the shape to the top-left corner of the 5x5 bitmap, so that the position
+// chosen by the player is the corner of the visible boat
+static void shift_boat(BOAT* b){
+
+	int up = 5, left = 5;
+
+	for(int i=0; i<5; i++){
+		for(int j=0; j<5; j++){
+			if(b->bitmap[i][j] == '1'){
+				if(i < up) up = i;
+				if(j < left) left = j;
+			}
+		}
+	}
+	if(up == 5 || (up == 0 && left == 0)) return;
+	for(int i=0; i<5; i++){
+		for(int j=0; j<5; j++){
+			b->bitmap[i][j] = (i+up < 5 && j+left < 5) ? b->bitmap[i+up][j+left] : '0';
+		}
+	}
+}
+
 void rotate_boat(BOAT* b){
 
 	for(int i=0; i<5/2; i++){ 
@@ -74,7 +96,9 @@ void rotate_boat(BOAT* b){
 			b->bitmap[j][5-1-i] = aux; 
 		}	 
 	}
+	shift_boat(b);
 }
+
 int rnd_rotation(){
 	return rand() % 4;
 }

@@ -9,6 +9,7 @@ typedef struct{
 	
 	char* type; // boat type string, e.g. "T", "L", etc.
 	char bitmap[5][5];
+	int pieces; // pieces not yet hit
 
 } BOAT;
 

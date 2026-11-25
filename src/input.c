@@ -33,3 +33,17 @@ char read_char(){
 	read_line(line, sizeof(line));
 	return line[0] == '\n' ? '\0' : line[0];
 }
+
+void clear_screen(){
+	printf("\033[2J\033[H");
+	fflush(stdout);
+}
+
+void wait_enter(char* msg){
+
+	char line[64];
+
+	printf("%s", msg);
+	fflush(stdout);
+	read_line(line, sizeof(line));
+}

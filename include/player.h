@@ -30,8 +30,7 @@ void free_player(PLAYER*,int);
 
 void print_id(PLAYER*);
 
-void print_field_q(PLAYER*,int);
-void print_field_s(PLAYER*,int);
+void print_field_shots(PLAYER*,int);
 void print_field_p(PLAYER*,int);
 
 #endif
