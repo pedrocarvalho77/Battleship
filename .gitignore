@@ -1,0 +1,4 @@
+*.o
+*.a
+engine
+.DS_Store

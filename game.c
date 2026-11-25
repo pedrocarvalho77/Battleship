@@ -37,6 +37,8 @@ GAME* play_game_a(SETUP* s){
 			print_field_s(s->p2,get_map_size(s));
 			printf("You have already shotted at this position\n");
 			p = new_point(get_map_size(s));
+			x = get_x(p);
+			y = get_y(p);
 		}
 		if(s->p2->field[y][x]->state == '0'){
 			printf("You haven't hitted a piece\n");
@@ -62,6 +64,8 @@ GAME* play_game_a(SETUP* s){
 			print_field_s(s->p1,get_map_size(s));
 			printf("You have already shotted at this position\n");
 			p = new_point(get_map_size(s));
+			x = get_x(p);
+			y = get_y(p);
 		}
 		if(s->p1->field[y][x]->state == '0'){
 			printf("You haven't hitted a piece\n");
@@ -72,7 +76,7 @@ GAME* play_game_a(SETUP* s){
 			s->p1->field[y][x]->state = '2';
 			set_hp(s->p1,-1);
 		}
-		print_field_p(s->p2,get_map_size(s));
+		print_field_p(s->p1,get_map_size(s));
 		print_field_s(s->p1,get_map_size(s));
 	}
 	if(s->p1->hp == 0){
@@ -93,7 +97,7 @@ GAME* play_game_q(SETUP* s){
 	while(s->p1->hp != 0 && s->p2->hp != 0){
 
 		int side;
-		QD_NODE* qd_node;
+		QD_NODE* qd_node = NULL;
 		POINT* se_corner;
 		
 		//jogada do p1
@@ -106,8 +110,8 @@ GAME* play_game_q(SETUP* s){
 
 		se_corner = make_point(side,side);
 
-		qd_node = search(qd_node, p,se_corner,side);
-		if(qd_node == NULL){
+		qd_node = search(s->p2->qtree, p,se_corner,side);
+		if(qd_node == NULL || qd_node->type != QDLEAF || qd_node->node.leaf.field_pointer->state == 3){
 			printf("You haven't hitted a piece\n");
 		}
 		else{
@@ -127,17 +131,17 @@ GAME* play_game_q(SETUP* s){
 
 		se_corner = make_point(side,side);
 
-		qd_node = search(qd_node, p,se_corner,side);
-		if(qd_node == NULL){
+		qd_node = search(s->p1->qtree, p,se_corner,side);
+		if(qd_node == NULL || qd_node->type != QDLEAF || qd_node->node.leaf.field_pointer->state == 3){
 			printf("You haven't hitted a piece\n");
 		}
 		else{
 			printf("You have hitted a piece\n");
 			change_field_pointer(qd_node);
-			set_hp(s->p2,-1);
+			set_hp(s->p1,-1);
 		}
 
-		print_field_q(s->p2,get_map_size(s));
+		print_field_q(s->p1,get_map_size(s));
 
 	}
 	if(s->p1->hp == 0){
